@@ -32,7 +32,7 @@ export const ChatInterface = () => {
     setMessages((prev) => [...prev, userMessage]);
 
     try {
-      const response = await fetch("https://n8n.s7tedigital.tech/webhook/chat", {
+      const response = await fetch("https://n8n.s7tedigital.tech/webhook-test/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
