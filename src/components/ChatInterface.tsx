@@ -22,7 +22,7 @@ export const ChatInterface = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = (content: string) => {
+  const handleSendMessage = async (content: string) => {
     const userMessage: Message = {
       id: Date.now().toString(),
       role: "user",
@@ -31,15 +31,32 @@ export const ChatInterface = () => {
     
     setMessages((prev) => [...prev, userMessage]);
 
-    // Simulate assistant response
-    setTimeout(() => {
+    try {
+      const response = await fetch("https://n8n.s7tedigital.tech/webhook/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: content }),
+      });
+
+      const data = await response.json();
+      
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: "Olá! Sou um assistente de IA. Como posso ajudá-lo hoje?",
+        content: data.response || data.message || "Desculpe, não consegui processar sua mensagem.",
       };
       setMessages((prev) => [...prev, assistantMessage]);
-    }, 1000);
+    } catch (error) {
+      console.error("Erro ao enviar mensagem:", error);
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Desculpe, ocorreu um erro ao processar sua mensagem.",
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    }
   };
 
   return (
