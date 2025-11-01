@@ -41,11 +41,17 @@ export const ChatInterface = () => {
       });
 
       const data = await response.json();
+      const responseContent = data.response || data.message || "Desculpe, não consegui processar sua mensagem.";
+      
+      // Não exibir mensagem do workflow
+      if (responseContent === "Workflow was started") {
+        return;
+      }
       
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content: data.response || data.message || "Desculpe, não consegui processar sua mensagem.",
+        content: responseContent,
       };
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
